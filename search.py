@@ -90,89 +90,35 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-
-
-    """ procedure DFS_iterative(G, v) is
-    let S be a stack
-    S.push(v)
-    while S is not empty do
-        v = S.pop()
-        if v is not labeled as discovered then
-            label v as discovered
-            for all edges from v to w in G.adjacentEdges(v) do 
-                S.push(w)"""
     stack = util.Stack()
-    stack.push((problem.getStartState(),"None",0))
+    stack.push((problem.getStartState(),[]))
     discovered = []
-    actions = []
-    parentMap = {}
-    target = 0
-    count = 0
     while not stack.isEmpty():
         v = stack.pop()
-       
-      
-        if v not in discovered:
-            discovered.append(v)
+        if problem.isGoalState(v[0]) :
+            print(v[1])
+            return v[1]
+        if v[0] not in discovered:
+            discovered.append(v[0])
             for w in problem.getSuccessors(v[0]):
-               
-                stack.push(w)
-                
-                parentMap[w] = v
-                print(parentMap[w])
-    parent = target
-    #print(parentMap[(problem.getStartState(),"None",0)])
-    while parent != None and count < 10:
-        actions.append(parent[1])
-        parent = parentMap[parent]
-        count += 1
-    print(actions)
-    print(actions.reverse())
-
-    return actions.reverse()
-        
-    #util.raiseNotDefined()
+                if w[0] not in discovered:      
+                    stack.push((w[0],v[1]+[w[1]]))
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    """""procedure BFS(G, root) is
- 2      let Q be a queue
- 3      label root as explored
- 4      Q.enqueue(root)
- 5      while Q is not empty do
- 6          v := Q.dequeue()
- 7          if v is the goal then
- 8              return v
- 9          for all edges from v to w in G.adjacentEdges(v) do
-10              if w is not labeled as explored then
-11                  label w as explored
-12                  Q.enqueue(w)
-    """
-    q = util.Queue
-    root = (problem.getStartState(),"None",0)
-    explored = {}
-    parent = {}
-    q.push(root)
-    explored[root] = True
-    path = []
+    q = util.Queue()
+    q.push((problem.getStartState(), []))
+    explored = []
+    explored.append(problem.getStartState())
     while not q.isEmpty() :
         v = q.pop()
-        if problem.isGoalState(v):
-            curr = v
-            while (curr != None):
-                path.append(parent[1])
-                curr = parent[curr]
+        if problem.isGoalState(v[0]):
+            return v[1]
         for w in problem.getSuccessors(v[0]):
-            if not explored[w]:
-                explored[w] = True
-                q.push(w)
-                parent[w] = v
-    return path
-    # util.raiseNotDefined()
+            if w[0] not in explored:
+                explored.append(w[0])
+                q.push((w[0],v[1]+[w[1]]))
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
