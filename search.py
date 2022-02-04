@@ -119,17 +119,16 @@ def uniformCostSearch(problem):
     node = problem.getStartState()
     fr = util.PriorityQueue()
     explored = []
-    cost = {}
-    cost[problem.getStartState()] = 0
     fr.push((node,[]),0)
     while not fr.isEmpty():
         v = fr.pop()
         if problem.isGoalState(v[0]):
             return v[1]
-        explored.append(v[0])
-        for w in problem.getSuccessors(v[0]):
-            if w[0] not in explored :
-                 fr.update((w[0],v[1]+[w[1]]),w[2])
+        if v[0] not in explored:
+            explored.append(v[0])
+            for w in problem.getSuccessors(v[0]):
+                if w[0] not in explored:
+                    fr.update((w[0],v[1]+[w[1]]),problem.getCostOfActions(v[1]+[w[1]]))
                
                 
 
@@ -159,7 +158,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 cost[w[0]] = newCost
                 q.push((w[0], v[1]+[w[1]]), newCost + heuristic(w[0], problem))
                 
-    util.raiseNotDefined()
+    #util.raiseNotDefined()
 
 
 # Abbreviations
