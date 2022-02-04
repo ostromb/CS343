@@ -37,6 +37,7 @@ Good luck and happy searching!
 from game import Directions
 from game import Agent
 from game import Actions
+from pacman import GameState
 import util
 import time
 import search
@@ -320,7 +321,6 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-        
 
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
@@ -464,9 +464,18 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
+    
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    
+    maxD = 0
+    g = problem.startingGameState
+    for food in foodGrid.asList() :
+        d = mazeDistance(food,position,g)
+        if d>maxD :
+            maxD = d
+    return maxD
+    
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
