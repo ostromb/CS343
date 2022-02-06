@@ -269,10 +269,6 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-
-        self.corners_list = [(1,1), (1,top), (right, 1), (right, top)]
-        self.startingGameState = startingGameState
-        
         
 
     def getStartState(self):
@@ -281,16 +277,14 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return (self.startingPosition, self.corners_list)
+        return (self.startingPosition, self.corners)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        if state[0] in state[1]:
-            state[1].remove(state[0])
-        return len(state[1])==0
+        return (len(list(state[1])) == 0)
 
     def getSuccessors(self, state):
         """
@@ -301,7 +295,6 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-        
 
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
@@ -316,8 +309,14 @@ class CornersProblem(search.SearchProblem):
             x,y = state[0]
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
-            if not self.walls[nextx][nexty]:
-                successors.append( (((nextx, nexty),list(state[1])), action, 1) )
+            hitsWall = self.walls[nextx][nexty]
+
+            new_corners = list(state[1])
+            if (nextx, nexty) in new_corners:
+                new_corners.remove((nextx, nexty))
+            
+            if not hitsWall:
+                successors.append( (((nextx, nexty), tuple(new_corners)), action, 1) )
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
@@ -350,12 +349,11 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    # find manhattan distance for closest corner 
-    
     maxdist = 0
     for corner in state[1]:
         dist = util.manhattanDistance(state[0], corner)
-        maxdist = max(maxdist, dist)
+        if dist > maxdist:
+            maxdist = dist
     return maxdist
    
 
